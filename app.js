@@ -4,6 +4,7 @@ const app = express();
 const dotenv = require('dotenv').config();
 const port = process.env.PORT;
 
+console.log(port);
 app.listen(port);
 
 const userRouter = require('./routes/users');
