@@ -27,3 +27,11 @@
 - BookController.js 추가
 - Category 전체 조회 & Categories.js , CategoryController.js 추가
 - 도서 전체 조회 API 와 도서 카테고리별 조회 API 병합 및 수정
+
+---
+
+03.13
+
+- `allBooks` 코드 간소화
+- 신간 도서 조회 기능 추가
+- 페이징 기능 추가
