@@ -48,6 +48,10 @@ INSERT INTO likes (user_id, liked_book_id) VALUES (2, 2);
 INSERT INTO likes (user_id, liked_book_id) VALUES (2, 3);
 INSERT INTO likes (user_id, liked_book_id) VALUES (2, 5);
 
+// books 테이블에 조건을 만족하는 행 개수
+SELECT *,
+	(SELECT COUNT(*) FROM likes WHERE liked_book_id = books.id) AS likes
+	FROM books;
 
 // 좋아요 삭제
 DELETE FROM likes WHERE user_id = 1 AND liked_book_id = 3;
