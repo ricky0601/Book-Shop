@@ -43,3 +43,13 @@
 - `likes.js` 좋아요 기능 구현
 - LikeController.js 추가
 - 좋아요 수 , 좋아요 여부 확인 기능 구현
+
+---
+
+03.17
+
+- `carts.js` 장바구니 기능 구현
+- CartController.js 추가
+- 장바구니 추가, 삭제, 수정 기능 구현
+
+---
