@@ -93,3 +93,8 @@ SELECT last_insert_id();
 
 // 결제된 도서 장바구니 삭제
 DELETE FROM cartItems WHERE id IN (1,2,3); 
+
+// FK 제약조건 이름 짓기
+fk 기준 테이블명 참조테이블명 참조키
+cartItems.users_id > users.id : fk_cartItem_users_id
+likes.user_id > users.id : fk_likes_user_id

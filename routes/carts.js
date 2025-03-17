@@ -2,31 +2,12 @@ const express = require('express');
 const router = express.Router();
 router.use(express.json());
 
-router.post("/",(req, res) => {
-    res.status(201).json({
-        message : "장바구니 담기 성공"
-    })
-});
+const { addToCart, getCartItems, removeCartItem} = require('../controller/CartController');
 
-router.get("/",(req, res) => {
-    res.status(200).json({
-        message : "장바구니 조회 성공"
-    })
-});
+router.post("/", addToCart);
 
-router.delete("/:bookId",(req, res) => {
-    const bookId = req.params.bookId;
+router.get("/", getCartItems);  // 선택된 id들이 req body로 같이 넘어오면 그때 선택된 장바구니 아이템 목록 조회
 
-    res.status(200).json({
-        bookId : bookId,
-        message : "장바구니 도서 삭제 성공"
-    })
-});
-
-router.get("/",(req, res) => {
-    res.status(200).json({
-        message : "(장바구니에서 선택한) 주문 예상 상품 목록 조회 성공"
-    })
-});
+router.delete("/:id", removeCartItem);
 
 module.exports = router;
