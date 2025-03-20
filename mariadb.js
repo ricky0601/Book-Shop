@@ -5,7 +5,7 @@ const connection = mariadb.createConnection({
     user: 'root',
     password: 'root',
     database: 'Bookshop',
-    port: 3307,
+    port: 3306,
     dateStrings: true,
 })
 
