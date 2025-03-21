@@ -44,6 +44,7 @@ const login = (req, res) => {
             if(loginUser && hashPassword == loginUser.password){
                 // token 만들기
                 const token = jwt.sign({
+                        id : loginUser.id,
                         email : loginUser.email,
                 }, process.env.PRIVATE_KEY, {
                     expiresIn : '1h',

@@ -1,11 +1,15 @@
+// controller/CartController.js (수정)
+
 const conn = require('../mariadb');
-const {StatusCodes} = require('http-status-codes');
+const { StatusCodes } = require('http-status-codes');
+const { ensureAuthorization } = require('../utils/auth'); // 모듈 import
 
 const addToCart = (req, res) => {
-    const {book_id, quantity, user_id} = req.body;
+    const {book_id, quantity} = req.body;
+    const userId = req.user.id; // ensureAuthorization에서 저장한 user 정보 사용
 
     const sql = "INSERT INTO cartItems (book_id, quantity, user_id) VALUES (?, ?, ?)";
-    const values = [book_id, quantity, user_id];
+    const values = [book_id, quantity, userId];
 
     conn.query(sql, values, (err, results) => {
         if(err){
@@ -18,13 +22,14 @@ const addToCart = (req, res) => {
 };
 
 const getCartItems = (req, res) => {
-    const {user_id, selected} = req.body;
+    const {selected} = req.body;
+    const userId = req.user.id;
 
     let sql = `SELECT cartItems.id, book_id, title, summary, quantity, price 
                 FROM cartItems LEFT JOIN books 
                 ON cartItems.book_id = books.id
                 WHERE user_id = ?`;
-    let values = [user_id];
+    let values = [userId];
 
     if(selected){
         sql += ` AND cartItems.id IN (?)`
@@ -46,11 +51,11 @@ const getCartItems = (req, res) => {
 };
 
 const removeCartItem = (req, res) => {
-    const {id} = req.params;
+    const cartItemId = req.params.id;
 
     const sql = "DELETE FROM cartItems WHERE id = ?;";
 
-    conn.query(sql, parseInt(id), (err, results) => {
+    conn.query(sql, parseInt(cartItemId), (err, results) => {
         if(err){
             console.log(err);
             return res.status(StatusCodes.BAD_REQUEST).end();

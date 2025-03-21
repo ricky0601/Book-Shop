@@ -1,12 +1,15 @@
+// controller/LikeController.js (수정)
+
 const conn = require('../mariadb');
-const {StatusCodes} = require('http-status-codes');
+const { StatusCodes } = require('http-status-codes');
+const { ensureAuthorization } = require('../utils/auth'); // 모듈 import
 
 const addLike = (req, res) => {
     const {bookId} = req.params;
-    const {user_id} = req.body;
+    const userId = req.user.id; // ensureAuthorization에서 저장한 user 정보 사용
 
     const sql = "INSERT INTO likes (user_id, liked_book_id) VALUES (?, ?)";
-    const values = [user_id, bookId];
+    const values = [userId, bookId];
 
     conn.query(sql, values, (err, results) => {
         if(err){
@@ -20,10 +23,10 @@ const addLike = (req, res) => {
 
 const removeLike = (req, res) => {
     const {bookId} = req.params;
-    const {user_id} = req.body;
+    const userId = req.user.id;
 
     const sql = `DELETE FROM likes WHERE user_id = ? AND liked_book_id = ?;`;
-    const values = [user_id, bookId];
+    const values = [userId, bookId];
 
     conn.query(sql, values, (err, results) => {
         if(err){
