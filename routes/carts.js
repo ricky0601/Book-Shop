@@ -5,10 +5,10 @@ const { ensureAuthorization } = require('../utils/auth');
 
 router.use(express.json());
 
-router.post("/", ensureAuthorization, addToCart);
+router.post("/", addToCart);
 
-router.get("/", ensureAuthorization, getCartItems);  // 선택된 id들이 req body로 같이 넘어오면 그때 선택된 장바구니 아이템 목록 조회
+router.get("/", getCartItems);
 
-router.delete("/:id", ensureAuthorization, removeCartItem);
+router.delete("/:id", removeCartItem);
 
 module.exports = router;
