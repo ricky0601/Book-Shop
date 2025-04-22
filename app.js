@@ -1,10 +1,18 @@
 const express = require('express');
 const app = express();
+const cors = require("cors");
 
 const dotenv = require('dotenv').config();
 const port = process.env.PORT;
 
 console.log(port);
+
+const corsOptions = {
+    origin: "http://localhost:3000", // 프론트엔드 주소
+    credentials: true,
+};
+app.use(cors(corsOptions));
+
 app.listen(port);
 
 const userRouter = require('./routes/users');
