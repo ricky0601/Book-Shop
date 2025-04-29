@@ -1,6 +1,6 @@
 const { ensureAuthorization } = require('../utils/auth');
 const jwt = require('jsonwebtoken');
-const mariadb = require('mysql2/promise');
+const conn = require('../mariadb'); 
 const {StatusCodes} = require('http-status-codes');
 
 const order = async (req, res) => {
@@ -70,8 +70,9 @@ const deleteCartItems = async (conn, items) => {
     return result;
 }
 
-const getOrders = async (req, res) => {
+const getOrders = (req, res) => {
     let authorization = ensureAuthorization(req, res);
+
     if(authorization instanceof jwt.TokenExpiredError){
         return res.status(StatusCodes.UNAUTHORIZED).json({
             "message" : "로그인 세션이 만료되었습니다. 다시 로그인 해주세요."
@@ -81,26 +82,24 @@ const getOrders = async (req, res) => {
             "message" : "잘못된 토큰입니다."
         });
     } else{
-        const conn = await mariadb.createConnection({
-            host: '127.0.0.1',
-            user: 'root',
-            password: 'root',
-            database: 'Bookshop',
-            port: 3306,
-            dateStrings: true,
-        });
-    
-        let sql = `SELECT orders.id, created_at, address, receiver, contact,
+        const sql = `SELECT orders.id, created_at, address, receiver, contact,
                 book_title, total_quantity, total_price
                 FROM orders LEFT JOIN delivery
-                ON orders.delivery_id = delivery_id`;
-        let [rows, fields] = await conn.query(sql);
-        console.log(sql);
-        return res.status(StatusCodes.OK).json(rows);
+                ON orders.delivery_id = delivery.id
+                WHERE orders.user_id = ?;
+                `;
+
+        conn.query(sql, authorization.id, (err, results) => {
+            if(err){
+                console.log(err);
+                return res.status(StatusCodes.BAD_REQUEST).end();
+            }
+            return res.status(StatusCodes.OK).json(results);
+        })
     }
 };
 
-const getOrderDetail = async (req, res) => {
+const getOrderDetail = (req, res) => {
     let authorization = ensureAuthorization(req, res);
     if(authorization instanceof jwt.TokenExpiredError){
         return res.status(StatusCodes.UNAUTHORIZED).json({
@@ -113,21 +112,18 @@ const getOrderDetail = async (req, res) => {
     } else{
         const {orderId} = req.params;
     
-        const conn = await mariadb.createConnection({
-            host: '127.0.0.1',
-            user: 'root',
-            password: 'root',
-            database: 'Bookshop',
-            port: 3306,
-            dateStrings: true,
-        });
-    
         let sql = `SELECT book_id, books.title AS book_title, author, price, quantity
                     FROM orderedBook LEFT JOIN books
                     ON orderedBook.book_id = books.id
                     WHERE order_id = ?;`;
-        let [rows, fields] = await conn.query(sql , [orderId]);
-        return res.status(StatusCodes.OK).json(rows);
+    
+        conn.query(sql, orderId, (err, results) => {
+            if(err){
+                console.log(err);
+                return res.status(StatusCodes.BAD_REQUEST).end();
+            }
+            return res.status(StatusCodes.OK).json(results);
+        })
     }
 };
 
